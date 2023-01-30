@@ -16,7 +16,7 @@ void BasicSpring::initVariables(){
     ball2.particle_property.setFillColor(sf::Color::White);
     ball2.particle_property.setRadius(20.f);
     ball2.particle_property.setOrigin(ball2.particle_property.getRadius(), ball2.particle_property.getRadius());
-    ball2.setPosition(sf::Vector2f(640.f/2.f, 100.f));
+    ball2.setPosition(sf::Vector2f(640.f/2.f, 60.f));
     Ball ball3;
     ball3.setMass(10.f);
     ball3.setDamping(0.3f);
@@ -24,17 +24,15 @@ void BasicSpring::initVariables(){
     ball3.particle_property.setFillColor(sf::Color::White);
     ball3.particle_property.setRadius(20.f);
     ball3.particle_property.setOrigin(ball3.particle_property.getRadius(), ball3.particle_property.getRadius());
-    ball3.setPosition(sf::Vector2f(640.f/2.f, 150.f));
+    ball3.setPosition(sf::Vector2f(640.f/2.f, 100.f));
 
     this->balls.push_back(ball1);
     this->balls.push_back(ball2);
     this->balls.push_back(ball3);
 
-    //adjusting the line
-    this->line.setBase(this->balls[0].getPosition());
-    this->line.setDirection(this->balls[1].getPosition());
-    this->line1.setBase(this->balls[1].getPosition());
-    this->line1.setDirection(this->balls[2].getPosition());
+    //...    
+    // this->lines.push_back(this->line);
+    // this->lines.push_back(this->line1);
 
     //resting position the two balls
     this->displacement = this->balls[0].getPosition() - this->balls[1].getPosition();
@@ -51,19 +49,22 @@ BasicSpring::BasicSpring(){
 void BasicSpring::springCalc(){
     sf::Vector2f displacement_1 = this->balls[0].getPosition() - this->balls[1].getPosition();
     float distance_1 = this->operation._magnitude(displacement_1);
-
     this->force = this->spring_coefficient * (distance_1 - this->rest_distance) * this->operation._unitVector(displacement_1);
-    // this->balls[0].setVelocity(-this->force);
-    this->balls[1].setVelocity(this->force);
-}
-void BasicSpring::springCalc1(){
-    sf::Vector2f displacement_1 = this->balls[1].getPosition() - this->balls[2].getPosition();
-    float distance_1 = this->operation._magnitude(displacement_1);
-    this->force1 = this->spring_coefficient * (distance_1 - this->rest_distance1) * this->operation._unitVector(displacement_1);
 
-    // this->balls[1].setVelocity(-this->force1);
+    sf::Vector2f displacement_2 = this->balls[1].getPosition() - this->balls[2].getPosition();
+    float distance_2 = this->operation._magnitude(displacement_2);
+    this->force1 = this->spring_coefficient * (distance_2 - this->rest_distance1) * this->operation._unitVector(displacement_2);
+
+    //resultant force for the middle ball
+    this->resultant_force = -this->force1 + this->force;
+    this->balls[1].setVelocity(this->resultant_force);
+
+    //force for the third ball
     this->balls[2].setVelocity(this->force1);
+
+
 }
+
 void BasicSpring::lineAdjust(Ball a, Ball b){
     this->line.setBase(a.getPosition());
     this->line.setDirection(b.getPosition());
@@ -88,7 +89,6 @@ void BasicSpring::collision(){
 //defining integrator and constructor
 void BasicSpring::update(float dt, sf::Vector2f mouse_position){
     this->springCalc();
-    this->springCalc1();
     this->lineAdjust(this->balls[0], this->balls[1]);
     this->lineAdjust1(this->balls[1], this->balls[2]);
     this->collision();
@@ -105,7 +105,8 @@ void BasicSpring::update(float dt, sf::Vector2f mouse_position){
 void BasicSpring::render(sf::RenderTarget* target){
     for(auto &ball : this->balls)
         ball.render(target);
-    
-    this->line.render(target);
-    this->line1.render(target);
+
+    //..
+    line.render(target);
+    line1.render(target);
 }

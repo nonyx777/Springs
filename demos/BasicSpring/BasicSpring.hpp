@@ -5,6 +5,7 @@
 class BasicSpring{
     private:
         std::vector<Ball> balls;
+        std::vector<Line> lines;
 
         //hooks law
         sf::Vector2f force;
@@ -14,6 +15,8 @@ class BasicSpring{
         sf::Vector2f displacement1;
         float rest_distance1;
         float spring_coefficient = 0.2f;
+        //..Dambert's force
+        sf::Vector2f resultant_force;
 
         //instantiating objects
         CollisionDetectionOperation cod;
