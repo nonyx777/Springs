@@ -14,15 +14,13 @@ class BasicSpring{
         sf::Vector2f force1;
         sf::Vector2f displacement1;
         float rest_distance1;
-        float spring_coefficient = 0.2f;
-        //..Dambert's force
+        float spring_coefficient = 0.3f;
+        //..D'alembert's force
         sf::Vector2f resultant_force;
 
         //instantiating objects
         CollisionDetectionOperation cod;
         Operation operation;
-        Line line;
-        Line line1;
 
         //..
         void initVariables();
@@ -33,9 +31,9 @@ class BasicSpring{
         //custom functions
         void springCalc();
         void springCalc1();
-        void lineAdjust(Ball a, Ball b);
-        void lineAdjust1(Ball a, Ball b);
+        void lineAdjust();
         void collision();
+        void createLine();
 
         //integrator and displayer
         void update(float dt, sf::Vector2f mouse_position);
