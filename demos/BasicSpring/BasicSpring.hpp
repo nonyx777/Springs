@@ -21,6 +21,7 @@ class BasicSpring{
         //instantiating objects
         CollisionDetectionOperation cod;
         Operation operation;
+        Ball ball_big;
 
         //..
         void initVariables();
