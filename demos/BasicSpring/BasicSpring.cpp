@@ -49,11 +49,13 @@ void BasicSpring::initVariables(){
     ball6.particle_property.setRadius(5.f);
     ball6.particle_property.setOrigin(ball6.particle_property.getRadius(), ball6.particle_property.getRadius());
     ball6.setPosition(sf::Vector2f(640.f/2.f, 75.f));
+
+    
     this->ball_big;
     this->ball_big.setMass(30.f);
     this->ball_big.setDamping(0.3f);
     this->ball_big.particle_property.setFillColor(sf::Color::White);
-    this->ball_big.particle_property.setRadius(50.f);
+    this->ball_big.particle_property.setRadius(80.f);
     this->ball_big.particle_property.setOrigin(this->ball_big.particle_property.getRadius(), this->ball_big.particle_property.getRadius());
     this->ball_big.setPosition(sf::Vector2f(0.f, 0.f));
 
@@ -91,11 +93,11 @@ void BasicSpring::springCalc(){
         float distance_2 = this->operation._magnitude(displacement_2);
         this->force1 = this->spring_coefficient * (distance_2 - this->rest_distance) * this->operation._unitVector(displacement_2);
 
-        this->resultant_force = -this->force1/2.f + this->force;
+        this->resultant_force = -this->force1/2.f + this->force + this->cod.a_velocity;
 
         this->balls[i].setVelocity(this->resultant_force);
         int j = i+1;
-        this->balls[j].setVelocity(this->force1);
+        this->balls[j].setVelocity(this->force1 + this->cod.a_velocity);
     }
 }
 
@@ -118,7 +120,11 @@ void BasicSpring::collision(){
                 this->cod._ballBallPenetrationResolution(this->balls[j], this->ball_big);
                 this->balls[j].particle_property.move(this->cod.a_position);
                 this->ball_big.particle_property.move(this->cod.b_position);
+                this->cod._ballBallCollisionResolution(this->balls[j], this->ball_big);
             }
+
+            this->cod.a_velocity = sf::Vector2f(0.f, 0.f);
+            this->cod.b_velocity = sf::Vector2f(0.f, 0.f);
         }
     }
 }
@@ -133,12 +139,10 @@ void BasicSpring::update(float dt, sf::Vector2f mouse_position){
     this->springCalc();
     this->lineAdjust();
     this->collision();
-    if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
-        this->balls[1].setPosition(mouse_position);
-    if(sf::Mouse::isButtonPressed(sf::Mouse::Right))
-        this->balls[2].setPosition(mouse_position);
     if(sf::Mouse::isButtonPressed(sf::Mouse::Middle)){
-        this->ball_big.setPosition(mouse_position);
+        sf::Vector2f disp = mouse_position - this->ball_big.getPosition();
+        disp = this->operation._unitVector(disp);
+        this->ball_big.setVelocity(disp * 5.f);
     }
 
     for(auto &ball : this->balls){
@@ -156,8 +160,4 @@ void BasicSpring::render(sf::RenderTarget* target){
         line.render(target);
     
     this->ball_big.render(target);
-    // this->lines[0].render(target);
-    // this->lines[1].render(target);
-    // line.render(target);
-    // line1.render(target);
 }

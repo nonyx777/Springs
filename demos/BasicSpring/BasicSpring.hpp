@@ -23,6 +23,9 @@ class BasicSpring{
         Operation operation;
         Ball ball_big;
 
+        //window boundary(line)
+        Line low_boundary = Line(sf::Vector2f(0.f, 360.f), sf::Vector2f(640.f, 360.f));
+
         //..
         void initVariables();
 
@@ -31,7 +34,6 @@ class BasicSpring{
 
         //custom functions
         void springCalc();
-        void springCalc1();
         void lineAdjust();
         void collision();
         void createLine();

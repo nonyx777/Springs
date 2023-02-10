@@ -10,20 +10,20 @@ bool CollisionDetectionOperation::_ballOverlapping(float radius_a, float radius_
 }
 bool CollisionDetectionOperation::_ballSegmentOverlapping(Ball &a, Line &l){
     if(this->_ballPointCollide(a, l.getBase())){
-        nearest_point = l.getBase();
-        return this->_ballPointCollide(a, nearest_point);
+        this->nearest_point = l.getBase();
+        return this->_ballPointCollide(a, this->nearest_point);
     }
     if(this->_ballPointCollide(a, l.getDirection())){
-        nearest_point = l.getDirection();
-        return this->_ballPointCollide(a, nearest_point);
+        this->nearest_point = l.getDirection();
+        return this->_ballPointCollide(a, this->nearest_point);
     }
 
     sf::Vector2f d = l.getDirection() - l.getBase();
-    sf::Vector2f lc = a.particle_property.getPosition() - l.getBase();
+    sf::Vector2f lc = a.getPosition() - l.getBase();
     sf::Vector2f p = this->operation._vectorProjection(lc, d);
-    nearest_point = l.getBase() + p;
+    this->nearest_point = l.getBase() + p;
 
-    return this->_ballPointCollide(a, nearest_point) && 
+    return this->_ballPointCollide(a, this->nearest_point) && 
     this->operation._magnitude(p) <= this->operation._magnitude(d) && 
     0 <= this->operation._dotProduct(p, d);
 }
@@ -130,7 +130,7 @@ bool CollisionDetectionOperation::_ballCollide(Ball &a, Ball &b){
     return _ballOverlapping(a.particle_property.getRadius(), b.particle_property.getRadius(), a.getPosition(), b.getPosition());
 }
 bool CollisionDetectionOperation::_ballPointCollide(Ball &a, sf::Vector2f point){
-    sf::Vector2f displacement = this->operation._displacement(a.particle_property.getPosition(), point);
+    sf::Vector2f displacement = this->operation._displacement(a.getPosition(), point);
     float distance = this->operation._magnitude(displacement);
     return distance <= a.particle_property.getRadius();
 }
